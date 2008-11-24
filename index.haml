@@ -23,6 +23,20 @@
   %body
     %h1 baconl
     %ul
+      %li
+        :plain
+          baconl(".post").append(
+            baconl("%h2.title On why some animals are more equal than others") , 
+            baconl("%p There was once a list of 7 commandments to be followed by all animals.") , 
+            baconl("%p There was also a list of 7 condiments to be put into chicken")
+          );
+      %li
+        :plain
+          var list = baconl("%ul");
+          $.each( [ "gato" , "perro" , "perico"] , function( index, animal ){
+            list.append( baconl("%li").text( animal ) );
+          });
+          
       %li baconl("%p.blue").text("Bind text with the text function.")
       %li baconl("%p.red").html("Bind text with the html function")
       %li baconl("%h1.green Hello World!")
@@ -34,11 +48,5 @@
 
     :javascript
       $().ready( function(){
-        $("ul li").click( function(){
-          $("body").append(
-            eval( $(this).text() )
-          );
-          
-        });
-        //runbaconl();
+        baconl.test();
       });

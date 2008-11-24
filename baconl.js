@@ -126,10 +126,9 @@ baconl.parseTemplate = function( template ) {
 }
 
 
-function runbaconl() {
+baconl.test = function() {
     var assertions = $("<ul />").attr("id", "assertions" )
     $(document.body).prepend( assertions );
-    
     
     function assert( should , is  ){
         var item = $("<li />");
@@ -188,14 +187,4 @@ function runbaconl() {
 
     testParseTemplate();
     testBuildNode();
-        
-    var haml = [
-        "#foo.bar" , 
-        "  %p hello world!",
-        "  .bye bye bye!" , 
-        "%h1" , 
-        "  welcome!"
-    ].join("\n");
-    
-    var es = baconl.splitElements( haml );
 }

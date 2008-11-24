@@ -1,0 +1,44 @@
+!!! Strict
+%html
+  %head
+    %script{:src=>"/baconl.js", :type=>"text/javascript"}
+    %script{:src=>"/jquery.js", :type=>"text/javascript"}
+    %style
+      :plain
+        .blue {
+          background-color: blue;
+        }
+        .red {
+          background-color: red;
+        }
+        .green {
+          background-color: green;
+        }
+        #welcome {
+          background-color: pink;
+        }
+        .big {
+          font-size: 40px;
+        }
+  %body
+    %h1 baconl
+    %ul
+      %li baconl("%p.blue").text("Bind text with the text function.")
+      %li baconl("%p.red").html("Bind text with the html function")
+      %li baconl("%h1.green Hello World!")
+      %li 
+        :plain
+            baconl("#welcome.big This is baconl").append(
+              baconl("%p this is a paragraph")
+            )
+
+    :javascript
+      $().ready( function(){
+        $("ul li").click( function(){
+          $("body").append(
+            eval( $(this).text() )
+          );
+          
+        });
+        //runbaconl();
+      });

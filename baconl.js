@@ -1,40 +1,65 @@
 function baconl( template ) {
     var $ = jQuery;
     
-    function toHTML( element ) {
-        var parsedItems = baconl.parseTemplate( element.definition );    
+    function toHTML( elements ) {
+        var collectedElements = $.map( elements , function( element , index ) {            
+            var parsedItems = baconl.parseTemplate( element.definition );
 
-        function repeat( string , times ) {
-            var result = "";
-            for (var i=0; i < times; i++) {
-                result += string
-            };
-            return result;
-        }
+            function repeat( string , times ) {
+                var result = "";
+                for (var i=0; i < times; i++) {
+                    result += string
+                };
+                return result;
+            }
 
-        if ( parsedItems.tag === undefined )
-        {
-            return "\n" + repeat( "  " , element.depth) + parsedItems.innerHTML;
-        }
-        
-        var self = $("<" + parsedItems.tag + "/>");
-        self.attr("id" , parsedItems.id);
-        self.addClass( parsedItems.classes.join( " " ) );
-            
-        if ( parsedItems.innerHTML !== undefined )
-        {
-            self.html( parsedItems.innerHTML );
-        }
-            
-        $.each( element.body , function( index, child) {
-            self.append( toHTML( child ) );
+            if ( parsedItems.tag === undefined )
+            {
+                return "\n" + repeat( "  " , element.depth) + parsedItems.innerHTML;
+            }
+
+            var self = $("<" + parsedItems.tag + "/>");
+            self.attr("id" , parsedItems.id);
+            self.addClass( parsedItems.classes.join( " " ) );
+
+            if ( parsedItems.innerHTML !== undefined )
+            {
+                self.html( parsedItems.innerHTML );
+            }
+            // console.log( element )
+            // self.append( 
+            //     baconl( element.definition ).append( toHTML( element.body ) )
+            // );
+
+            $.each( element.body , function( index, child) {
+                self.append(
+                    baconl(child.definition) , 
+                    toHTML( child.body )
+                )
+                // var e = ;
+                // $.each( child.body , function( i , c) {
+                //     e.append( baconl( c.definition).append( toHTML( c.body ) ) );
+                // });
+                // self.append( e );
+            });
+
+            return self;            
         });
         
-        return self;
-
+        var result;
+        $.each( collectedElements , function( i , el ) {
+            if ( result === undefined )
+            {
+                result = el;
+            }
+            else
+            {
+                result.add( el );
+            }
+        })
+        return result;
     }
-        
-    return toHTML( baconl.splitElements(template)[0] );
+    return toHTML( baconl.splitElements(template) );
 }
 
 baconl.splitElements = function( template ) {
@@ -117,7 +142,7 @@ baconl.parseTemplate = function( template ) {
     {
         tokens.tag = "div";
     }
-    
+        
     // Retrieve inner content
     nextToken = template.match( innerHTMLDefinition );
     tokens.innerHTML = !!nextToken ? nextToken[1] : undefined;
@@ -125,66 +150,3 @@ baconl.parseTemplate = function( template ) {
     return tokens;
 }
 
-
-baconl.test = function() {
-    var assertions = $("<ul />").attr("id", "assertions" )
-    $(document.body).prepend( assertions );
-    
-    function assert( should , is  ){
-        var item = $("<li />");
-        item.text( is );
-
-        if ( should === is )
-        {
-            item.css({
-                "background-color": "#BFFFBF",
-                "border" : "1px solid #008F00"
-            });
-        }
-        else
-        {
-            item.css({
-                "background-color": "#B30000",
-                "border" : "1px solid #FFBFBF"
-            });            
-        }
-        
-        if ( is === undefined )
-        {
-            item.text("undefined").css("font-style" , "italic");
-        }
-        else if ( is.length === 0 )
-        {
-            item.text("\"\"").css("color" , "#24006B");
-        }
-        
-        console.log( should === is , is );
-        assertions.append( item );
-    }
-    
-    function testParseTemplate() {
-        assert( "div" , baconl.parseTemplate( "%div#id.class.class" ).tag );
-        assert( "div" , baconl.parseTemplate( "#id.class.class" ).tag );
-        assert( "span" , baconl.parseTemplate( "%span#id.class.class" ).tag ); 
-
-        assert( "fun-id" , baconl.parseTemplate( "%span#fun-id.class.class" ).id );
-        assert( "serious_id" , baconl.parseTemplate( "%span#serious_id.class.class" ).id );    
-
-        assert( ["class-1","class-2"].join(",") , baconl.parseTemplate( "%span#fun-id.class-1.class-2" ).classes.join(",") );
-        assert( [].join("") , baconl.parseTemplate( "%span#fun-id" ).classes.join(",") );
-
-        assert( "hello world" , baconl.parseTemplate( "#id.class hello world" ).innerHTML );
-        assert( "#1. hello world" , baconl.parseTemplate( "#id.class \#1. hello world" ).innerHTML );
-        assert( undefined , baconl.parseTemplate( "#id.class" ).innerHTML );
-        assert( "%p hello" , baconl.parseTemplate( "#id.class %p hello" ).innerHTML );        
-    }
-    
-    function testBuildNode() {
-        assert( '<div class="class-1 class-2" id="hello"></div>' , $("<div/>").append( baconl("#hello.class-1.class-2") ).html() );
-        assert( '<div class="class-1 class-2" id="hello">?</div>' , $("<div/>").append(baconl("#hello.class-1.class-2 ?")).html() );
-        assert( '<div class="class-1 class-2" id="hello">?\n  !</div>' , $("<div/>").append(baconl("#hello.class-1.class-2 ?\n  !")).html() );        
-    }
-
-    testParseTemplate();
-    testBuildNode();
-}

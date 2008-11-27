@@ -1,3 +1,59 @@
+var baconl = (function() {
+    var self = function( template ) {
+        var tree = baconize( template );
+        window.console.log(tree);
+    }
+    
+    function baconize( unreadBuffer , parentNode ) {
+        if ( parentNode === undefined )
+        {
+            parentNode = { 
+                depth: 0 , 
+                childNodes: [] ,
+                definition: ""
+            } ;
+        }
+        function lineDepth( line ) {
+            return line.match(/^\s*/)[0].length/2 + 1;
+        }
+        function isChild( line ) {
+            return lineDepth(line) === parentNode.depth+1;
+        }
+
+        for ( var i = 0 ; i < unreadBuffer.length ; i++ ) {
+            if ( isChild( unreadBuffer[i] ) ) {
+                var child = baconize( unreadBuffer.slice( i+1 ) , {
+                    depth: parentNode.depth + 1 , 
+                    childNodes: [],
+                    definition: unreadBuffer[i]
+                });
+                parentNode.childNodes.push( child );
+            }
+            else if ( lineDepth(unreadBuffer[i]) <= parentNode.depth )
+            {
+                return parentNode;            
+            }
+        }
+        return parentNode;
+    }
+    
+    return self    
+})();
+
+
+var haml = [
+"%h1 Welcome!",
+".section",
+"  %p this is a section of this website",
+"  %a.link ",
+"    this is a link",
+"  %p :)",
+".footer",
+"  Copyright"
+].join("\n");
+
+baconl(haml )
+
 function baconl( template ) {
     var $ = jQuery;
     
@@ -18,32 +74,21 @@ function baconl( template ) {
                 return "\n" + repeat( "  " , element.depth) + parsedItems.innerHTML;
             }
 
-            var self = $("<" + parsedItems.tag + "/>");
-            self.attr("id" , parsedItems.id);
-            self.addClass( parsedItems.classes.join( " " ) );
+            var self = $(parsedItems.openTag()+parsedItems.closeTag());
 
             if ( parsedItems.innerHTML !== undefined )
             {
                 self.html( parsedItems.innerHTML );
             }
-            // console.log( element )
-            // self.append( 
-            //     baconl( element.definition ).append( toHTML( element.body ) )
-            // );
 
             $.each( element.body , function( index, child) {
                 self.append(
                     baconl(child.definition) , 
                     toHTML( child.body )
                 )
-                // var e = ;
-                // $.each( child.body , function( i , c) {
-                //     e.append( baconl( c.definition).append( toHTML( c.body ) ) );
-                // });
-                // self.append( e );
             });
-
-            return self;            
+            
+            return self;
         });
         
         var result;
@@ -100,7 +145,22 @@ baconl.parseTemplate = function( template ) {
         id: undefined,
         classes:[],
         tag: undefined,
-        innerHTML: "" 
+        innerHTML: "" , 
+        openTag: function() {
+            if ( tokens.tag === undefined ) { return ""; }
+            var result = "<" + tokens.tag;
+            if ( tokens.id !== undefined ) { result += " id='" + tokens.id + "'"; }
+            if ( tokens.classes !== undefined ) 
+            { 
+                result+=" class='" + tokens.classes.join(" ") + "'"; 
+            }
+            return result + ">";
+        } , 
+        closeTag: function() {
+            if ( tokens.tag === undefined ) { return ""; }
+            return "</" + tokens.tag + ">";
+        }
+        
     };
 
     var tagDefinition   = /^\s*%([A-Za-z][A-Za-z0-9]*)/;

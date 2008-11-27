@@ -3,7 +3,6 @@
   %head
     %script{:src=>"/baconl.js", :type=>"text/javascript"}
     %script{:src=>"/jquery.js", :type=>"text/javascript"}
-    %script{:src=>"/tests.js", :type=>"text/javascript"}    
     %style
       :plain
         .blue {
@@ -44,17 +43,18 @@
             )
 
     :javascript
-      $().ready( function(){
-        baconl.test();
-        
+    
+      $().ready( function(){      
+        if ( baconl.test !== undefined )
+        {
+          baconl.test();
+        }
         $("pre").append(
-          baconl(".post").append(
+          baconl("#post.post").append(
             baconl("%h2.title On why some animals are more equal than others") , 
             baconl("%p There was once a list of 7 commandments to be followed by all animals.") , 
             baconl("%p There was also a list of 7 condiments to be put into chicken")
           )
         );
-        
-        
         
       });

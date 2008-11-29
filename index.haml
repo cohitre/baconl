@@ -1,60 +1,75 @@
 !!! Strict
 %html
   %head
+    %script{:src=>"/jquery.js", :type=>"text/javascript"}  
     %script{:src=>"/baconl.js", :type=>"text/javascript"}
-    %script{:src=>"/jquery.js", :type=>"text/javascript"}
+    :javascript
+      jQuery.baconl = function( template ) {
+        return jQuery( baconl( template ) );
+      }
+
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.6.0/build/reset/reset-min.css">      
     %style
       :plain
-        .blue {
-          background-color: blue;
+        body {
+          font: normal 100% "Trebuchet MS", Verdana, Helvetica, Arial,sans-serif !important;
+          margin: 1em;
         }
-        .red {
-          background-color: red;
+        .button {
+          cursor:pointer;
+          border: 1px solid black;
         }
-        .green {
-          background-color: green;
-        }
-        #welcome {
-          background-color: pink;
-        }
-        .big {
-          font-size: 40px;
-        }
+        
   %body
-    %pre
-    %h1 baconl
-    %ul
-      %li
-        :plain
-      %li
-        :plain
-          var list = baconl("%ul");
-          $.each( [ "gato" , "perro" , "perico"] , function( index, animal ){
-            list.append( baconl("%li").text( animal ) );
-          });
-          
-      %li baconl("%p.blue").text("Bind text with the text function.")
-      %li baconl("%p.red").html("Bind text with the html function")
-      %li baconl("%h1.green Hello World!")
-      %li 
-        :plain
-            baconl("#welcome.big This is baconl").append(
-              baconl("%p this is a paragraph")
-            )
+    %h1 Examples:
+    
+    .example
+      %h2 Building a blogpost
+      %pre
+        %code
+          :plain 
+            $.baconl(".post").append(
+                $.baconl("%h2.title On why some animals are more equal than others") , 
+                $.baconl("%p").append(
+                  "There was once a list of 7 commandments to be followed by all animals."
+                ) , 
+                $.baconl("%p\n  There was also a list of 7 condiments to be put into chicken")
+            );
+      .results
+    %hr/
+    .example
+      %h2 Building a list
+      %pre
+        %code
+          :plain
+            var list = $.baconl("%ul");
+            $.each( [ "gato" , "perro" , "perico"] , function( index, animal ){
+                list.append( $.baconl("%li").text( animal ) );
+            });
+            list;
+      .results
+    %hr/
+    .example
+      %h2 Using haml
+      %pre
+        %code
+          :plain
+            var haml = [
+                "%div" , 
+                "  %h1 This is the document that eats babies." , 
+                "  %p Some documents that have the capacity to eat things.",
+                "  %p This one in particular can eat babies." ].join("\n");
+            $.baconl( haml );
+      .results
 
     :javascript
-    
-      $().ready( function(){      
-        if ( baconl.test !== undefined )
-        {
-          baconl.test();
-        }
-        $("pre").append(
-          baconl("#post.post").append(
-            baconl("%h2.title On why some animals are more equal than others") , 
-            baconl("%p There was once a list of 7 commandments to be followed by all animals.") , 
-            baconl("%p There was also a list of 7 condiments to be put into chicken")
-          )
-        );
-        
+      $().ready(function(){
+        $(".example").each( function( index , node ) {
+          $(node).append( 
+            $.baconl(".button Run").click( function(){
+              var result = eval( $("code",node).text() );  
+              $(".results",node).html( result );
+            })
+          );
+        });
       });

@@ -1,12 +1,12 @@
 # baconl
 
-Haml for javascript
+Haml for Javascript
 
 ## Why?
 
-jQuery traverses the DOM like a graceful swan dancing ballet in a giant marshmellow. Since css selectors describe html markup so well they are very good for not only traversing documents, but also for generating markup. This is what makes haml so fun to use.
+[jQuery](http://jquery.com) traverses the DOM like a graceful swan dancing ballet in a giant marshmallow. However, using it to *create* HTML is not so graceful. The same thing that makes traversing the DOM with jQuery so poetic is what makes [HAML](http://haml.hamptoncatlin.com/) so fun: *CSS selectors*.
 
-The jQuery syntax for creating objects does not take advantage of CSS selectors. Baconl fixes this.
+CSS Selectors are great at describing HTML markup. Being able to create and navigate HTML with CSS Selectors is the *greatest poetic license ever*. 
 
 To generate this:
 
@@ -14,35 +14,36 @@ To generate this:
 
 You do this:
 
-    jQuery( "<div />").addClass("example code").attr("id" , "example-1").text( "Hello world!" );
+    $( "<div />").addClass("example code").attr("id" , "example-1").text("Hello world!");
 
 or this:
 
-    jQuery('<div class="example code" id="example-1">Hello world!</div>');
+    $('<div class="example code" id="example-1">Hello world!</div>');
 
 But with baconl, you do this:
 
-    baconl( "#example-1.code.example Hello world!" );
+    $.baconl( "#example-1.code.example Hello world!" );
+
+Great!
 
 ## Examples
 
 ### Building a blogpost
 
-
-        baconl(".post").append(
-            baconl("%h2.title On why some animals are more equal than others") , 
-            baconl("%p There was once a list of 7 commandments to be followed by all animals.") , 
-            baconl("%p There was also a list of 7 condiments to be put into chicken")
+        $.baconl(".post").append(
+            $.baconl("%h2.title On why some animals are more equal than others") , 
+            $.baconl("%p There was once a list of 7 commandments to be followed by all animals.") , 
+            $.baconl("%p There was also a list of 7 condiments to be put into chicken")
         );
 
 ### Building a list
 
-    var list = baconl("%ul");
+    var list = $.baconl("%ul");
     $.each( [ "gato" , "perro" , "perico"] , function( index, animal ){
-        list.append( baconl("%li").text( animal ) );
+        list.append( $.baconl("%li").text( animal ) );
     });
 
-### Working from haml
+### Working with haml
 
     var haml = [
         "%div"
@@ -51,4 +52,5 @@ But with baconl, you do this:
         "  %p This one in particular can eat babies."
     ].join("\n");
 
-    $(document.body).append( baconl( haml ) );
+    $(document.body).append( $.baconl( haml ) );
+    

@@ -86,4 +86,27 @@ class BaconlTest < Test::Unit::TestCase
     assert_equal( "<ul><li>1</li>\n<li>2</li>\n<li>3</li></ul>" , doc )
   end
 
+  def test_manipulate_classes
+    doc = eval(%Q[
+      var node = baconl.node("%div.cute");
+      node.addClass("left right").removeClass("right center").html();
+    ])
+    assert_equal("<div class='cute left'></div>" , doc )
+  end
+
+  def test_remove_node
+    doc = eval(%Q[
+      var item = baconl.node("%li 1");
+      var list = baconl.node("%ul");
+      list.html(
+        item,
+        baconl.node("%li 2"),
+        baconl.node("%li 3")        
+      );
+      item.remove();
+      list.html();
+    ])
+    assert_equal( "<ul><li>2</li>\n<li>3</li></ul>" , doc )
+  end
+
 end

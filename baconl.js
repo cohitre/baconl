@@ -28,6 +28,15 @@ baconl.each = function( array , callb )  {
     return array;
 }
 
+baconl.grep = function( array , callb ) {
+    var result = [];
+    baconl.each( array , function(i,obj) {
+        if ( callb( i , obj ) ) {
+            result.push( obj );
+        }
+    } );
+    return result;
+}
 
 baconl.parse = function( template ) {
     if ( template === undefined ) { return undefined; }
@@ -144,8 +153,7 @@ baconl.node = function( definition ) {
     }
 
     self.html = function() {
-        if ( arguments.length === 0 )
-        {
+        if ( arguments.length === 0 ) {
             return htmlBody();
         }
         self.childNodes = [];
@@ -154,18 +162,26 @@ baconl.node = function( definition ) {
     }
 
     self.prepend = function() {
-        for ( var i = 0 ; i < arguments.length ; i++ )
-        {
+        for ( var i = 0 ; i < arguments.length ; i++ ) {
             self.childNodes.splice(0,0, makeChild( arguments[i] ) );
         }
         return self;        
     }
     
     self.append = function() {
-        for ( var i = 0 ; i < arguments.length ; i++ )
-        {
+        for ( var i = 0 ; i < arguments.length ; i++ ) {
             self.childNodes.push( makeChild( arguments[i] ) );
         }
+        return self;
+    }
+    
+    self.remove = function() {
+        self.depth = 0;
+        if ( self.parentNode === undefined ) { return self; }
+        self.parentNode.childNodes = baconl.grep( self.parentNode.childNodes , function(i,node){
+            return node !== self;
+        } );
+        self.parentNode = undefined;
         return self;
     }
     
@@ -184,7 +200,16 @@ baconl.node = function( definition ) {
         });
         return self;
     }
-
+    
+    self.removeClass = function( classes ) {
+        baconl.each( classes.split(/\s+/) , function(index, argClassName) {
+            self.classes = baconl.grep( self.classes , function( index , ownClassName ) {
+                return (ownClassName !== argClassName);
+            } ) ;
+        });
+        return self;
+    }
+    
     parseDefintion();
     return self;
 }

@@ -38,23 +38,23 @@ class BaconlTest < Test::Unit::TestCase
   end
 
   def test_construct_node
-    assert_equal( "<div></div>" , eval('baconl.node( "%div" ).toHTML();') )
-    assert_equal( "<div></div>" , eval('baconl.node(baconl.node( "%div" )).toHTML();') )    
-    assert_equal( "<div>body</div>" , eval('baconl.node( "%div body" ).toHTML();') )
-    assert_equal( "<div class='home'>body</div>" , eval('baconl.node( "%div.home body" ).toHTML();') )    
+    assert_equal( "<div></div>" , eval('baconl.node( "%div" ).html();') )
+    assert_equal( "<div></div>" , eval('baconl.node(baconl.node( "%div" )).html();') )    
+    assert_equal( "<div>body</div>" , eval('baconl.node( "%div body" ).html();') )
+    assert_equal( "<div class='home'>body</div>" , eval('baconl.node( "%div.home body" ).html();') )    
   end
     
   def test_prepend_node
     doc = eval(%Q[
       baconl.node( "%div" )
       .prepend( baconl.node("%h1 Welcome!") )
-    .toHTML();])
+    .html();])
     assert_equal( "<div><h1>Welcome!</h1></div>" , doc )    
     doc = eval(%Q[
       baconl.node( "%div" )
       .prepend( baconl.node("%h1 Second") )
       .prepend( baconl.node("%h2 first") )      
-    .toHTML();])
+    .html();])
     assert_equal( "<div><h2>first</h2>\n<h1>Second</h1></div>" , doc )    
   end
 
@@ -62,15 +62,28 @@ class BaconlTest < Test::Unit::TestCase
     doc = eval(%Q[
       baconl.node( "%div" )
       .append( baconl.node("%h1 Welcome!") )
-    .toHTML();])
+    .html();])
     assert_equal( "<div><h1>Welcome!</h1></div>" , doc )
   end
 
   def test_append_template
     doc = eval(%Q[
-      baconl.node( "%div" ).append( "%h1 Welcome!" ).toHTML();
+      baconl.node( "%div" ).append( "%h1 Welcome!" ).html();
     ])
     assert_equal( "<div><h1>Welcome!</h1></div>" , doc )
+  end
+
+  def test_set_html
+    doc = eval(%Q[
+      var list = baconl.node("%ul");
+      list.html(
+        baconl.node("%li 1"),
+        baconl.node("%li 2"),
+        baconl.node("%li 3")        
+      );
+      list.html();
+    ])
+    assert_equal( "<ul><li>1</li>\n<li>2</li>\n<li>3</li></ul>" , doc )
   end
 
 end

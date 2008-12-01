@@ -7,18 +7,25 @@ var baconl = (function() {
         else {
             tree = template;
         }
-        return tree.toHTML();
+        return tree.html();
     }
     
     return self    
 })();
 
-baconl.map = function map( array , callb ) {
+baconl.map = function ( array , callb ) {
     var result = [];
     for (var i=0; i < array.length; i++) {
         result.push( callb( i , array[i] ) );
     };
     return result;
+}
+
+baconl.each = function( array , callb )  {
+    for (var i=0; i < array.length; i++) {
+        callb( i , array[i] );
+    };
+    return array;
 }
 
 
@@ -28,20 +35,7 @@ baconl.parse = function( template ) {
         id: undefined,
         classes:[],
         tag: undefined,
-        innerHTML: "" , 
-        openTag: function() {
-            if ( tokens.tag === undefined ) { return ""; }
-            var result = "<" + tokens.tag;
-            if ( tokens.id !== undefined ) { result += " id='" + tokens.id + "'"; }
-            if ( tokens.classes.length > 0 ) { 
-                result+=" class='" + tokens.classes.join(" ") + "'"; 
-            }
-            return result + ">";
-        } , 
-        closeTag: function() {
-            if ( tokens.tag === undefined ) { return ""; }
-            return "</" + tokens.tag + ">";
-        }
+        innerHTML: "" 
     };
 
     var tagDefinition   = /^\s*%([A-Za-z][A-Za-z0-9]*)/;
@@ -102,11 +96,61 @@ baconl.node = function( definition ) {
         parent: function() { return self.parentNode; }
     };
     
+    function htmlBody() {
+        var node = self;
+        var result = "";
+        
+        function openTag( tokens ) {
+            if ( tokens.tag === undefined ) { return ""; }
+            var result = "<" + tokens.tag;
+            if ( tokens.id !== undefined ) { result += " id='" + tokens.id + "'"; }
+            if ( tokens.classes.length > 0 ) { 
+                result+=" class='" + tokens.classes.join(" ") + "'"; 
+            }
+            return result + ">";
+        } 
+        function closeTag( tokens ) {
+            if ( tokens.tag === undefined ) { return ""; }
+            return "</" + tokens.tag + ">";
+        }
+
+        result += openTag( node );
+
+        if ( self.innerHTML !== undefined ) {
+            result += self.innerHTML;
+        } 
+
+        result += baconl.map( node.childNodes , function(index , childNode ){
+            return childNode.html();
+        } ).join("\n");
+
+        result += closeTag( node );
+        return result;        
+    }
+        
+    function parseDefintion(){
+        var element = baconl.parse( self.definition );
+        self.id = element.id;
+        self.classes = element.classes;
+        self.tag = element.tag;
+        self.innerHTML = element.innerHTML;
+    }    
+    
     function makeChild( child ) {
         child = baconl.node( child );
         child.depth = self.depth + 1;
         child.parentNode = self;
         return child;
+    }
+
+    self.html = function() {
+        if ( arguments.length === 0 )
+        {
+            return htmlBody();
+        }
+        self.childNodes = [];
+        self.append.apply( self , arguments );
+        return self;                
     }
 
     self.prepend = function() {
@@ -125,25 +169,23 @@ baconl.node = function( definition ) {
         return self;
     }
     
-    
-    
-    self.toHTML = function() {
-        var node = self;
-        var element = baconl.parse( node.definition );
-        var result = element.openTag();
-
-        if ( element.innerHTML !== undefined ) {
-            result += element.innerHTML;
-        } 
-
-        result += baconl.map( node.childNodes , function(index , childNode ){
-            return childNode.toHTML();
-        } ).join("\n");
-
-        result += element.closeTag();
-        return result;        
+    self.hasClass = function( className ) {
+        for (var i=0; i < self.classes.length; i++) {
+            if ( self.classes[i] === className ) { return true; }
+        };
+        return false;
     }
     
+    self.addClass = function( classes ) {
+        baconl.each( classes.split(/\s+/) , function(i , className) {
+            if ( !self.hasClass( className ) ) {
+                self.classes.push( className );
+            }
+        });
+        return self;
+    }
+
+    parseDefintion();
     return self;
 }
 

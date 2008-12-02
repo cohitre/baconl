@@ -109,4 +109,18 @@ class BaconlTest < Test::Unit::TestCase
     assert_equal( "<ul><li>2</li>\n<li>3</li></ul>" , doc )
   end
 
+  def test_empty
+    doc = eval(%Q[
+      var list = baconl.node("%ul");
+      list.html(
+        baconl.node("%li 1"),
+        baconl.node("%li 2")
+      );
+      list.html();
+    ])
+    assert_equal( "<ul><li>1</li>\n<li>2</li></ul>" , doc )    
+    doc = eval("list.empty().html();")
+    assert_equal( "<ul></ul>" , doc )        
+  end
+
 end

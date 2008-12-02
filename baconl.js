@@ -156,7 +156,7 @@ baconl.node = function( definition ) {
         if ( arguments.length === 0 ) {
             return htmlBody();
         }
-        self.childNodes = [];
+        self.empty();
         self.append.apply( self , arguments );
         return self;                
     }
@@ -182,6 +182,13 @@ baconl.node = function( definition ) {
             return node !== self;
         } );
         self.parentNode = undefined;
+        return self;
+    }
+    
+    self.empty = function() {
+        baconl.each( self.childNodes , function(i,node){
+            node.remove();
+        });
         return self;
     }
     

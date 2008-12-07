@@ -59,3 +59,9 @@ function baconlLite( template ) {
     element += "/>";
     return element;
 }
+
+if ( jQuery !== undefined ) {
+    jQuery.baconl = function( template ) {
+        return jQuery( baconl( template ) );
+    }
+}

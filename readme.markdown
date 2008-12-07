@@ -26,6 +26,12 @@ But with baconl, you do this:
 
 Great!
 
+## Flavors
+
+baconl parses a subset of Haml. It doesn't include filters or setting attributes yet. It can also do some simple manipulation on the nodes without the aid of the browsers DOM. This makes it useful in Server Side Javascript.
+
+baconl-lite is a lighter version of baconl that only parses css selectors (tags need to be prepended with a %). It favors hooking up to jQuery early to better take advantage of the jQuery library.
+
 ## Examples
 
 ### Building a blogpost

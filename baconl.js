@@ -251,3 +251,10 @@ baconl.baconize = function( unreadBuffer , parentNode ) {
     }
     return parentNode;
 }
+
+
+if ( jQuery !== undefined ) {
+    jQuery.baconl = function( template ) {
+        return jQuery( baconl( template ) );
+    }
+}

@@ -2,6 +2,7 @@
 %html
   %head
     %script{:src=>"/jquery.js", :type=>"text/javascript"}  
+    %script{:src=>"/json.js", :type=>"text/javascript"}        
     %script{:src=>"/baconl.js", :type=>"text/javascript"}
     %script{:src=>"/qunit.js", :type=>"text/javascript"}    
     :javascript
@@ -20,8 +21,6 @@
     #main
 
     :javascript
-      $(document).ready(function(){
-        
         test("Binding to jQuery", function() {
           ok( jQuery.baconl , "jQuery binding exists.");
         });
@@ -34,6 +33,12 @@
           equals( "element", node.id );
           equals( ["class-1","class-2"].join(" "), node.classes.join(" ") );
         });
+        
+        test("Attributes" , function() {
+          equals( baconl.parse('%a{"href":"/index.html"}').attributes.href,  "/index.html" ,  "Extracting single attribute");
+          equals( baconl.parse('%a{"href":"/ind\\"ex.html"}').attributes.href ,"/ind\"ex.html" ,  "Attribute value with escaped characters");          
+          equals( baconl.parse('%a{"href":"/index}.html"}').attributes.href , "/index}.html" , "Attribute value with escaped bracket");
+        } );
 
         test("Selector with default values" , function(){
           var node = baconl.parse( ".class-1.class-2" );
@@ -151,4 +156,5 @@
           list.empty();
           equals( "<ul></ul>" , list.html() );
         });
-      });
+
+

@@ -591,6 +591,7 @@ baconl.node = function( definition ) {
         parent: function() { return self.parentNode; }
     };
     
+    
     function htmlBody() {
         var node = self;
         var result = "";
@@ -620,7 +621,14 @@ baconl.node = function( definition ) {
         } ).join("\n");
 
         result += closeTag( node );
+        
         return result;        
+    }
+    
+    function toDOMObjects() {
+        var element = parseDefintion();
+        console.log( element );
+        
     }
         
     function parseDefintion(){
@@ -637,7 +645,7 @@ baconl.node = function( definition ) {
         child.parentNode = self;
         return child;
     }
-
+    
     self.html = function() {
         if ( arguments.length === 0 ) {
             return htmlBody();

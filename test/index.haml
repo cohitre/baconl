@@ -1,7 +1,7 @@
 !!!
 %html
   %head
-    - ["jquery","baconl","json","qunit"].each do |js|
+    - ["jquery","baconl-lite","baconl","json","qunit"].each do |js|
       %script{:src =>"/javascript/#{js}.js", :type=>"text/javascript"}
     - ["qunit"].each do |css|
       %link{:rel=>"stylesheet",:href=>"/stylesheet/#{css}.css"}

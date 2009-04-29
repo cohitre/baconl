@@ -1,0 +1,68 @@
+!!!
+%html
+  %head
+    - ["jquery","baconl-lite","json","qunit"].each do |js|
+      %script{:src =>"/javascript/#{js}.js", :type=>"text/javascript"}
+    - ["qunit"].each do |css|
+      %link{:rel=>"stylesheet",:href=>"/stylesheet/#{css}.css"}
+  %body
+    %h1 baconl engine tests
+    %h2#userAgent
+    %ol#tests
+    #main
+    :javascript
+        test("Binding to jQuery", function() {
+          ok( jQuery.baconl , "jQuery binding exists.");
+        });
+
+        module("Selector Parser");
+
+        test("Simple selector", function() {
+          var node = baconl.parse( "%h2#element.class-1.class-2" );
+          equals( "h2", node.tag );
+          equals( "element", node.id );
+          equals( ["class-1","class-2"].join(" "), node.classes.join(" ") );
+        });
+
+        test("Selector with default values" , function(){
+          var node = baconl.parse( ".class-1.class-2" );
+          equals( "div", node.tag );
+          equals( undefined , node.id );
+          equals( ["class-1","class-2"].join(" "), node.classes.join(" ") );
+        });
+
+        test("Selector with body" , function(){
+          var node = baconl.parse( ".classes body");
+          equals( "div" , node.tag );
+          equals( "classes" , node.classes.join(" ") );
+          equals( "body" , node.innerHTML );
+        });
+
+        test("Tagless strings" , function(){
+          var node = baconl.parse("simple string");
+          equals( undefined , node.tag );
+          equals( "" , node.classes.join(" ") );
+          equals( "simple string" , node.innerHTML );
+        });
+
+        module("HTML generator");
+
+        test("Simple selector", function() {
+          var node = baconl( "%h2#element.class-1.class-2" );
+          equals( node , "<h2 id='element' class='class-1 class-2'/>" );
+        });
+
+        test("Selector with default values" , function(){
+          var node = baconl( ".class-1.class-2" );
+          equals( node , "<div class='class-1 class-2'/>" );
+        });
+
+        test("Selector with body" , function() {
+          var node = baconl( ".class-1.class-2 hello" );
+          equals( "<div class='class-1 class-2'>hello</div>", node );
+        });
+
+        test("Text node" , function(){
+          var node = baconl("simple string");
+          equals( "simple string" , node );
+        });

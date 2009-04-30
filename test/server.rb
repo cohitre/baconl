@@ -6,6 +6,14 @@ require "sinatra"
 APP_ROOT = File.expand_path("#{File.dirname( __FILE__ )}/..")
 set :haml, {:format => :html5 }
 
+def qunit_setup( title )
+  %Q{<h1>#{title}</h1>
+  <h2 id="banner"></h2>
+  <h2 id="userAgent"></h2>
+  <ol id="tests"></ol>
+  <div id="main"></div>}
+end
+
 set :views , "#{APP_ROOT}/test"
 set :public, "#{APP_ROOT}/test"
 
@@ -16,10 +24,3 @@ get("/tests/*") do
   haml params[:splat].join("/").split(".").first.to_sym
 end
 get( "/" ) { haml :index }
-
-
-# get( "/:file.js" , :javascript ) { |p| open("./#{p[:file]}.js").read }
-# get( "/:file.css" , :stylesheet ) { |p| open("./#{p[:file]}.css").read }
-# s.haml("/json","./json.haml")
-# s.haml( "/" , "./index.haml" )
-# s.start

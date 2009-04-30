@@ -9,19 +9,14 @@
       jQuery.baconl = function( template ) {
         return jQuery( baconl( template ) );
       }
-  
     %style
       :plain
+        iframe { width:100%;}
   %body
-  
-    %h1 Baconl tests
-    %h2#userAgent
-
-    %ol#tests
-
-    #main
-    - ["selector","generator","manipulation"].each do |frame|
-      -# %iframe{:src=>"/tests/#{frame}.html"}
+    - ["lite","parsehaml"].each do |frame|
+      %h2
+        %a{:href=>"/tests/#{frame}.html",:target=>"_parent"}= frame
+      %iframe{:frameborder=>0,:src=>"/tests/#{frame}.html"}
 
     :javascript
         test("Binding to jQuery", function() {

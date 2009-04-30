@@ -1,12 +1,12 @@
 !!!
 %html
   %head
-    - ["jquery","baconl-lite","json","qunit"].each do |js|
+    - ["jquery","baconl-lite","baconl","json","qunit"].each do |js|
       %script{:src =>"/javascript/#{js}.js", :type=>"text/javascript"}
     - ["qunit"].each do |css|
       %link{:rel=>"stylesheet",:href=>"/stylesheet/#{css}.css"}
-  %body
-    = qunit_setup "baconl engine tests"
+  %body  
+    = qunit_setup "baconl haml parser tests"
     :javascript
         test("Binding to jQuery", function() {
           ok( jQuery.baconl , "jQuery binding exists.");
@@ -42,16 +42,24 @@
           equals( "simple string" , node.innerHTML );
         });
 
+        test( "Construct node" , function() {
+          equals( "<div></div>" , baconl.node( "%div" ).html() )
+          equals( "<div></div>" , baconl.node(baconl.node( "%div" )).html() )
+          equals( "<div>body</div>" , baconl.node( "%div body" ).html() )
+          equals( "<div class='home'>body</div>" , baconl.node( "%div.home body" ).html());
+
+        });
+
         module("HTML generator");
 
         test("Simple selector", function() {
           var node = baconl( "%h2#element.class-1.class-2" );
-          equals( node , "<h2 id='element' class='class-1 class-2'/>" );
+          equals( "<h2 id='element' class='class-1 class-2'></h2>", node );
         });
 
         test("Selector with default values" , function(){
           var node = baconl( ".class-1.class-2" );
-          equals( node , "<div class='class-1 class-2'/>" );
+          equals( "<div class='class-1 class-2'></div>", node );
         });
 
         test("Selector with body" , function() {
@@ -64,9 +72,9 @@
           equals( "simple string" , node );
         });
 
-        module("baconl Utilities");
-        test("Extend", function(){
-          baconl.extend({ testString: "hello" });
-          equals( baconl.testString , "hello");
-          equals( baconl.parse , baconl.parseSelector );
-        });
+        test("HAML" , function(){
+          equals("<h1>The cat in the hat</h1>" ,  baconl('%h1 The cat in the hat') );
+          equals("<h1>The cat in the hat</h1>\n<h2>by <span>Dr. Seuss</span></h2>" ,
+            baconl('%h1 The cat in the hat\n%h2 by \n  %span Dr. Seuss') );
+        }) ;
+                       

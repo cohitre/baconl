@@ -479,7 +479,7 @@ replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 })();
 
 
-var baconl = (function() {    
+var baconl = (function() {
     var self = function( template ) {
         var tree;
         if ( template.isNode !== true ) {
@@ -490,8 +490,8 @@ var baconl = (function() {
         }
         return tree.html();
     }
-    
-    return self    
+
+    return self
 })();
 
 baconl.map = function ( array , callb ) {
@@ -526,7 +526,7 @@ baconl.parse = function( template ) {
         classes:[] ,
         tag: undefined ,
         attributes: {} ,
-        innerHTML: "" 
+        innerHTML: ""
     };
 
     var tagDefinition   = /^\s*%([A-Za-z][A-Za-z0-9]*)/;
@@ -583,28 +583,28 @@ baconl.node = function( definition ) {
         return definition;
     }
     var self = {
-        definition: definition||"" , 
-        isNode: true, 
-        depth: 0 , 
-        childNodes: [] , 
-        parentNode: undefined, 
+        definition: definition||"" ,
+        isNode: true,
+        depth: 0 ,
+        childNodes: [] ,
+        parentNode: undefined,
         parent: function() { return self.parentNode; }
     };
-    
-    
+
+
     function htmlBody() {
         var node = self;
         var result = "";
-        
+
         function openTag( tokens ) {
             if ( tokens.tag === undefined ) { return ""; }
             var result = "<" + tokens.tag;
             if ( tokens.id !== undefined ) { result += " id='" + tokens.id + "'"; }
-            if ( tokens.classes.length > 0 ) { 
-                result+=" class='" + tokens.classes.join(" ") + "'"; 
+            if ( tokens.classes.length > 0 ) {
+                result+=" class='" + tokens.classes.join(" ") + "'";
             }
             return result + ">";
-        } 
+        }
         function closeTag( tokens ) {
             if ( tokens.tag === undefined ) { return ""; }
             return "</" + tokens.tag + ">";
@@ -614,61 +614,61 @@ baconl.node = function( definition ) {
 
         if ( self.innerHTML !== undefined ) {
             result += self.innerHTML;
-        } 
+        }
 
         result += baconl.map( node.childNodes , function(index , childNode ){
             return childNode.html();
         } ).join("\n");
 
         result += closeTag( node );
-        
-        return result;        
+
+        return result;
     }
-    
+
     function toDOMObjects() {
         var element = parseDefintion();
         console.log( element );
-        
+
     }
-        
+
     function parseDefintion(){
         var element = baconl.parse( self.definition );
         self.id = element.id;
         self.classes = element.classes;
         self.tag = element.tag;
         self.innerHTML = element.innerHTML;
-    }    
-    
+    }
+
     function makeChild( child ) {
         child = baconl.node( child );
         child.depth = self.depth + 1;
         child.parentNode = self;
         return child;
     }
-    
+
     self.html = function() {
         if ( arguments.length === 0 ) {
             return htmlBody();
         }
         self.empty();
         self.append.apply( self , arguments );
-        return self;                
+        return self;
     }
 
     self.prepend = function() {
         for ( var i = 0 ; i < arguments.length ; i++ ) {
             self.childNodes.splice(0,0, makeChild( arguments[i] ) );
         }
-        return self;        
+        return self;
     }
-    
+
     self.append = function() {
         for ( var i = 0 ; i < arguments.length ; i++ ) {
             self.childNodes.push( makeChild( arguments[i] ) );
         }
         return self;
     }
-    
+
     self.remove = function() {
         self.depth = 0;
         if ( self.parentNode === undefined ) { return self; }
@@ -678,21 +678,21 @@ baconl.node = function( definition ) {
         self.parentNode = undefined;
         return self;
     }
-    
+
     self.empty = function() {
         baconl.each( self.childNodes , function(i,node){
             node.remove();
         });
         return self;
     }
-    
+
     self.hasClass = function( className ) {
         for (var i=0; i < self.classes.length; i++) {
             if ( self.classes[i] === className ) { return true; }
         };
         return false;
     }
-    
+
     self.addClass = function( classes ) {
         baconl.each( classes.split(/\s+/) , function(i , className) {
             if ( !self.hasClass( className ) ) {
@@ -701,7 +701,7 @@ baconl.node = function( definition ) {
         });
         return self;
     }
-    
+
     self.removeClass = function( classes ) {
         baconl.each( classes.split(/\s+/) , function(index, argClassName) {
             self.classes = baconl.grep( self.classes , function( index , ownClassName ) {
@@ -710,7 +710,7 @@ baconl.node = function( definition ) {
         });
         return self;
     }
-    
+
     parseDefintion();
     return self;
 }
@@ -719,7 +719,7 @@ baconl.baconize = function( unreadBuffer , parentNode ) {
     if ( unreadBuffer.constructor === String ) {
         unreadBuffer = unreadBuffer.split("\n");
     }
-    
+
     if ( parentNode === undefined ) {
         parentNode = baconl.node();
     }
@@ -734,13 +734,13 @@ baconl.baconize = function( unreadBuffer , parentNode ) {
         if ( isChild( unreadBuffer[i] ) ) {
             var child = baconl.node( unreadBuffer[i] ) ;
             parentNode.append( child );
-            baconl.baconize( 
-                unreadBuffer.slice( i+1 ) , 
-                child 
+            baconl.baconize(
+                unreadBuffer.slice( i+1 ) ,
+                child
             );
         }
         else if ( lineDepth(unreadBuffer[i]) <= parentNode.depth ) {
-            return parentNode;            
+            return parentNode;
         }
     }
     return parentNode;

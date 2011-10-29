@@ -1,15 +1,15 @@
 !!! Strict
 %html
   %head
-    %script{:src=>"/jquery.js", :type=>"text/javascript"}  
-    %script{:src=>"/json.js", :type=>"text/javascript"}    
+    %script{:src=>"/jquery.js", :type=>"text/javascript"}
+    %script{:src=>"/json.js", :type=>"text/javascript"}
     %script{:src=>"/qunit.js", :type=>"text/javascript"}
-        
+
     :javascript
       jQuery.baconl = function( template ) {
         return jQuery( baconl( template ) );
       }
-    <link rel="stylesheet" type="text/css" href="/qunit.css">          
+    <link rel="stylesheet" type="text/css" href="/qunit.css">
     %style
       :plain
   %body
@@ -20,7 +20,7 @@
 
     :javascript
       module("JSON Parser");
-    
+
       test("Parsing", function() {
         equals( {"a":1} , JSON.parse("{'a':1} c") );
       }) ;

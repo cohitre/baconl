@@ -4,14 +4,14 @@ require 'johnson'
 @context = Johnson::Runtime.new
 
 code = %q{
-  
+
   var json = "{ welcome: \"intermission\"} cece"
-  
+
   function extractJSON( string ) {
     if ( string.match(/^\{/) ) {
       var open = 1;
       var index = 1;
-      
+
       while ( open > 0 && index < string.length ) {
         if ( string[index] === '}' ) {
           open--;
@@ -27,8 +27,8 @@ code = %q{
       return "{}";
     }
   }
-  
-  
+
+
   extractJSON(json);
 }
 

@@ -4,7 +4,7 @@ function baconlLite( template ) {
         id: undefined,
         classes:[],
         tag: undefined,
-        innerHTML: "" 
+        innerHTML: ""
     };
 
     var tagDefinition   = /^\s*%([A-Za-z][A-Za-z0-9]*)/;
@@ -12,7 +12,7 @@ function baconlLite( template ) {
     var classDefinition = /^\.([A-Za-z][A-Za-z0-9:_\-]*)/;
 
     // TODO: parse JSON and use it for the element attributes
-    // var jsonDefinition = 
+    // var jsonDefinition =
 
     var innerHTMLDefinition = /\s*\\?((.|[\n])+)/m;
 
@@ -47,7 +47,7 @@ function baconlLite( template ) {
     // Retrieve inner content
     nextToken = template.match( innerHTMLDefinition );
     tokens.innerHTML = !!nextToken ? nextToken[1] : undefined;
-    
+
     var element = "";
     element += "<"+tokens.tag;
     if ( tokens.id !== undefined ) {

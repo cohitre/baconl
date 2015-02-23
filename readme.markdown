@@ -6,7 +6,7 @@ Haml for Javascript
 
 [jQuery](http://jquery.com) traverses the DOM like a graceful swan dancing ballet in a giant marshmallow. However, using it to *create* HTML is not so graceful. The same thing that makes traversing the DOM with jQuery so poetic is what makes [HAML](http://haml.hamptoncatlin.com/) so fun: *CSS selectors*.
 
-CSS Selectors are great at describing HTML markup. Being able to create and navigate HTML with CSS Selectors is the *greatest poetic license ever*. 
+CSS Selectors are great at describing HTML markup. Being able to create and navigate HTML with CSS Selectors is the *greatest poetic license ever*.
 
 To generate this:
 
@@ -37,8 +37,8 @@ baconl-lite is a lighter version of baconl that only parses css selectors (tags 
 ### Building a blogpost
 
         $.baconl(".post").append(
-            $.baconl("%h2.title On why some animals are more equal than others") , 
-            $.baconl("%p There was once a list of 7 commandments to be followed by all animals.") , 
+            $.baconl("%h2.title On why some animals are more equal than others") ,
+            $.baconl("%p There was once a list of 7 commandments to be followed by all animals.") ,
             $.baconl("%p There was also a list of 7 condiments to be put into chicken")
         );
 
@@ -53,10 +53,9 @@ baconl-lite is a lighter version of baconl that only parses css selectors (tags 
 
     var haml = [
         "%div"
-        "  %h1 This is the document that eats babies." , 
+        "  %h1 This is the document that eats babies." ,
         "  %p There are many documents that have the capacity to eat things.",
         "  %p This one in particular can eat babies."
     ].join("\n");
 
     $(document.body).append( $.baconl( haml ) );
-    

@@ -2,15 +2,15 @@ flkhlfgl gyf
 !!! Strict
 %html
   %head
-    %script{:src=>"/jquery.js", :type=>"text/javascript"}  
-    %script{:src=>"/json.js", :type=>"text/javascript"}        
+    %script{:src=>"/jquery.js", :type=>"text/javascript"}
+    %script{:src=>"/json.js", :type=>"text/javascript"}
     %script{:src=>"/baconl.js", :type=>"text/javascript"}
-    %script{:src=>"/qunit.js", :type=>"text/javascript"}    
+    %script{:src=>"/qunit.js", :type=>"text/javascript"}
     :javascript
       jQuery.baconl = function( template ) {
         return jQuery( baconl( template ) );
       }
-    <link rel="stylesheet" type="text/css" href="/qunit.css">          
+    <link rel="stylesheet" type="text/css" href="/qunit.css">
     %style
       :plain
   %body
@@ -18,26 +18,26 @@ flkhlfgl gyf
     %h2#userAgent
 
     %ol#tests
-    
+
     #main
 
     :javascript
         test("Binding to jQuery", function() {
           ok( jQuery.baconl , "jQuery binding exists.");
         });
-        
+
         module("Selector Parser");
-        
+
         test("Simple selector", function() {
           var node = baconl.parse( "%h2#element.class-1.class-2" );
           equals( "h2", node.tag );
           equals( "element", node.id );
           equals( ["class-1","class-2"].join(" "), node.classes.join(" ") );
         });
-        
+
         test("Attributes" , function() {
           equals( baconl.parse('%a{"href":"/index.html"}').attributes.href,  "/index.html" ,  "Extracting single attribute");
-          equals( baconl.parse('%a{"href":"/ind\\"ex.html"}').attributes.href ,"/ind\"ex.html" ,  "Attribute value with escaped characters");          
+          equals( baconl.parse('%a{"href":"/ind\\"ex.html"}').attributes.href ,"/ind\"ex.html" ,  "Attribute value with escaped characters");
           equals( baconl.parse('%a{"href":"/index}.html"}').attributes.href , "/index}.html" , "Attribute value with escaped bracket");
         } );
 
@@ -47,7 +47,7 @@ flkhlfgl gyf
           equals( undefined , node.id );
           equals( ["class-1","class-2"].join(" "), node.classes.join(" ") );
         });
-        
+
         test("Selector with body" , function(){
           var node = baconl.parse( ".classes body");
           equals( "div" , node.tag );
@@ -61,17 +61,17 @@ flkhlfgl gyf
           equals( "" , node.classes.join(" ") );
           equals( "simple string" , node.innerHTML );
         });
-        
+
         test( "Construct node" , function() {
           equals( "<div></div>" , baconl.node( "%div" ).html() )
-          equals( "<div></div>" , baconl.node(baconl.node( "%div" )).html() )    
+          equals( "<div></div>" , baconl.node(baconl.node( "%div" )).html() )
           equals( "<div>body</div>" , baconl.node( "%div body" ).html() )
-          equals( "<div class='home'>body</div>" , baconl.node( "%div.home body" ).html());    
-          
+          equals( "<div class='home'>body</div>" , baconl.node( "%div.home body" ).html());
+
         });
 
         module("HTML generator");
-        
+
         test("Simple selector", function() {
           var node = baconl( "%h2#element.class-1.class-2" );
           equals( "<h2 id='element' class='class-1 class-2'></h2>", node );
@@ -81,25 +81,25 @@ flkhlfgl gyf
           var node = baconl( ".class-1.class-2" );
           equals( "<div class='class-1 class-2'></div>", node );
         });
-        
+
         test("Selector with body" , function() {
           var node = baconl( ".class-1.class-2 hello" );
           equals( "<div class='class-1 class-2'>hello</div>", node );
         });
-        
+
         test("Text node" , function(){
           var node = baconl("simple string");
           equals( "simple string" , node );
         });
-        
+
         test("HAML" , function(){
           equals("<h1>The cat in the hat</h1>" ,  baconl('%h1 The cat in the hat') );
-          equals("<h1>The cat in the hat</h1>\n<h2>by <span>Dr. Seuss</span></h2>" ,  
+          equals("<h1>The cat in the hat</h1>\n<h2>by <span>Dr. Seuss</span></h2>" ,
             baconl('%h1 The cat in the hat\n%h2 by \n  %span Dr. Seuss') );
         }) ;
-        
+
         module("Node Manipulation" );
-        
+
         test("Prepend Node" , function(){
           var node = baconl.node( "%div" )
               .prepend( baconl.node("%h1 Welcome!") )
@@ -107,11 +107,11 @@ flkhlfgl gyf
           equals( "<div><h1>Welcome!</h1></div>" , node );
           var doc = baconl.node( "%div" )
               .prepend( baconl.node("%h1 Second") )
-              .prepend( baconl.node("%h2 first") )      
+              .prepend( baconl.node("%h2 first") )
               .html();
           equals( "<div><h2>first</h2>\n<h1>Second</h1></div>" , doc );
         });
-        
+
         test("Appending node" , function(){
           var node = baconl.node( "%div" ).append( "%h1 Welcome!" ).html();
           equals( "<div><h1>Welcome!</h1></div>" , node );
@@ -122,7 +122,7 @@ flkhlfgl gyf
             list.html(
               baconl.node("%li 1"),
               baconl.node("%li 2"),
-              baconl.node("%li 3")        
+              baconl.node("%li 3")
             );
           equals("<ul><li>1</li>\n<li>2</li>\n<li>3</li></ul>" , list.html() );
         });
@@ -132,20 +132,20 @@ flkhlfgl gyf
           node.addClass("left right").removeClass("right center");
           equals("<div class='cute left'></div>" , node.html() );
         });
-        
+
         test("Remove node" , function(){
           var item = baconl.node("%li 1");
           var list = baconl.node("%ul");
           list.html(
             item,
             baconl.node("%li 2"),
-            baconl.node("%li 3")        
+            baconl.node("%li 3")
           );
           item.remove();
           equals( "<ul><li>2</li>\n<li>3</li></ul>" , list.html() )
         });
-        
-        
+
+
         test("Empty node" , function(){
           var list = baconl.node("%ul");
           list.html(
